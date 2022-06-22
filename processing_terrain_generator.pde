@@ -55,16 +55,19 @@ void func(){
   PerlinNoise temperatureMap = new PerlinNoise(0.0, 0.0, 0.02, 40);
   temperatureMap.makeThisUniform(0.33);
   uniformTemperatureMap = temperatureMap.getUniformSequence();
-  uniformPrecipitationMap = makeThisUniform(generatePrecipitationMap(), 0.33);
-  uniformTemperatureMap = makeThisUniform(generateTemperatureMap(), 0.33);
+
   println(9);
   handler = new ImageHandler();
   println(10);
-  biomes = getBiome();
+  BiomeHandler bHandler = new BiomeHandler(pointsNumber);
+  bHandler.calculateBiome(handler, uniformTemperatureMap, uniformPrecipitationMap, blurredVorMap);
+  biomes = bHandler.getBiomes();
   println(11);
-  heightMap = getHeightMap();
+  PerlinNoise hNoise = new PerlinNoise(1000.0, 2000.0, 0.01, 80, 8, 0.5);
+  heightMap = hNoise.getSequence();
   println(12);
-  smoothHeightMap = getSmoothHeightMap();
+  PerlinNoise smoothNoise = new PerlinNoise(1000.0, 2000.0, 0.01, 80, 1, 0.5);
+  smoothHeightMap = smoothNoise.getSequence();
   println(13);
   newHMap = applyFilters();
 
@@ -418,6 +421,7 @@ float[][] getSmoothHeightMap(){
       smoothHeightMap[i][j] = noise(xoff, yoff);
     }
   }
+  
   return smoothHeightMap;
 }
 

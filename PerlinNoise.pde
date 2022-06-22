@@ -3,13 +3,22 @@ class PerlinNoise{
   private float[][] uniformSequence;
   
   public PerlinNoise(float xoff, float yoff, float increment, int seed){ // O(width*height)
+    generateNoise(xoff, yoff, increment, seed, 4, 0.5);
+  }
+    
+  public PerlinNoise(float xoff, float yoff, float increment, int seed, int lod, float falloff){ // O(width*height)
+    generateNoise(xoff, yoff, increment, seed, lod, falloff);
+  }
+  
+  private void generateNoise(float xoff, float yoff, float increment, int seed, int lod, float falloff){
     noiseSeed(seed);
     sequence = new float[width][height];
     for(int i = 0; i < width; i++){
       xoff += increment;
+      float theyoff = yoff;
       for(int j = 0; j < height; j++){
-        yoff += increment;
-        sequence[i][j] = noise(xoff, yoff);
+        theyoff += increment;
+        sequence[i][j] = noise(xoff, theyoff);
       }
     }
   }
