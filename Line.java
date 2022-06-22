@@ -4,7 +4,7 @@ public class Line {
   public float[] point1;
   public float[] point2;
   
-  public Line(float coordX1, float coordY1, float coordX2, float coordY2){
+  public Line(float coordX1, float coordY1, float coordX2, float coordY2){ // O(1)
     this.a = (coordY1 - coordY2) / (coordX1 - coordX2);
     this.b = coordY1 - this.a * coordX1;
     this.point1 = new float[2];
@@ -15,20 +15,20 @@ public class Line {
     this.point2[1] = coordY2;
   }
 
-  public Line(float[] p1, float[] p2){
+  public Line(float[] p1, float[] p2){ // O(1)
     this.a = (p1[1] - p2[1]) / (p1[0] - p2[0]);
     this.b = p1[1] - this.a * p1[0];
     this.point1 = p1;
     this.point2 = p2;
   }
   
-  public float giveMeY(float x){
+  public float giveMeY(float x){ // O(1)
     return this.a * x + this.b;
   }
-  public float giveMeX(float y){
+  public float giveMeX(float y){ // O(1)
     return (y - this.b) / this.a;
   }
-  public float[] intersection(Line other, int width, int height){
+  public float[] intersection(Line other, int width, int height){ // O(1)
     float[] result = new float[2];
     
     if(other.point1[1] == other.point2[1] && other.point2[1] == 0){
