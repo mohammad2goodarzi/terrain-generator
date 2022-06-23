@@ -128,7 +128,19 @@ class VoronoiHandler{
     result[1] /= cornerNumber;
     return result;
   }
-  
+  public void drawVertcies(int zoom, int xoff, int yoff){
+    MPolygon[] regions = myVoronoi.getRegions();
+    for(int i=0; i<regions.length; i++)
+    {
+      fill(255, 255, 255);
+      float[][] regionCoordinates = regions[i].getCoords();
+      for(int j = 0; j < regionCoordinates.length; j++)
+      {
+        fill(255, 0, 0);
+        circle((regionCoordinates[j][0]/zoom)+xoff, (regionCoordinates[j][1]/zoom)+yoff, 4);
+      }
+    }
+  }  
   public void drawVertcies(){
     MPolygon[] regions = myVoronoi.getRegions();
     for(int i=0; i<regions.length; i++)
@@ -139,6 +151,21 @@ class VoronoiHandler{
       {
         fill(255, 0, 0);
         circle(regionCoordinates[j][0], regionCoordinates[j][1], 4);
+      }
+    }
+  }
+  public void drawEdges(int zoom, int xoff, int yoff){
+    int cnt = 0;
+    float[][] myEdges = myVoronoi.getEdges();
+    for(int i=0; i<myEdges.length; i++)
+    {
+      float startX = myEdges[i][0];
+      float startY = myEdges[i][1];
+      float endX = myEdges[i][2];
+      float endY = myEdges[i][3];
+      if(!((startX < 0 || startX > width || startY < 0 || startY > height) && (endX < 0 || endX > width || endY < 0 || endY > height))){
+        stroke(0, 0, 0);
+        line(startX/zoom + xoff, startY/zoom + yoff, endX/zoom + xoff, endY/zoom + yoff);
       }
     }
   }
@@ -156,15 +183,19 @@ class VoronoiHandler{
         line(startX, startY, endX, endY);
       }
     }
+  }  
+  public void drawPoints(int zoom, int xoff, int yoff) {
+    for(int i = 0; i < points.length; i++){
+      fill(0, 0, 255);
+      circle(points[i][0]/zoom + xoff, points[i][1]/zoom + yoff, 6);
+    }  
   }
-  
   public void drawPoints() {
     for(int i = 0; i < points.length; i++){
       fill(0, 0, 255);
       circle(points[i][0], points[i][1], 6);
     }  
-  }
-  
+  }  
   public float[][] getPoints(){
     return points;
   }

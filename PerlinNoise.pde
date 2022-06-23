@@ -12,6 +12,7 @@ class PerlinNoise{
   
   private void generateNoise(float xoff, float yoff, float increment, int seed, int lod, float falloff){ // O(width*height)
     noiseSeed(seed);
+    noiseDetail(lod, falloff);
     sequence = new float[width][height];
     for(int i = 0; i < width; i++){
       xoff += increment;

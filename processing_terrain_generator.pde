@@ -18,7 +18,7 @@ int[] colorsB;
 
 int[][] blurredVorMap;
 float[][][] boundaryNoise;
-int pointsNumber = 1000;
+int pointsNumber = 100;  // ----
 float[][] points;
 float[][] newPoints;
 int[][] table;
@@ -49,6 +49,18 @@ BiomeFilter temporary3Filter;
 
 VoronoiHandler vHandler;
 
+
+int chunckOffset = 0;
+Chunck chunck1;
+Chunck chunck2;
+Chunck chunck3;
+Chunck chunck4;
+Chunck chunck5;
+Chunck chunck6;
+Chunck chunck7;
+Chunck chunck8;
+Chunck chunck9;
+
 void func(){
   BlurredVoronoiHandler bvHandler = new BlurredVoronoiHandler(points, pointsNumber);
   bvHandler.theVoronoiTable();
@@ -56,32 +68,27 @@ void func(){
   table = bvHandler.getTable();
   blurredVorMap = bvHandler.getBlurredVorMap();
 
-  println(5);
-  println(6);
-  println(7);
   PerlinNoise precipitationMap = new PerlinNoise(0.0, 0.0, 0.02, 10);
   precipitationMap.makeThisUniform(0.33);
   uniformPrecipitationMap = precipitationMap.getUniformSequence();
-  println(8);
+
   PerlinNoise temperatureMap = new PerlinNoise(0.0, 0.0, 0.02, 40);
   temperatureMap.makeThisUniform(0.33);
   uniformTemperatureMap = temperatureMap.getUniformSequence();
 
-  println(9);
   handler = new ImageHandler();
-  println(10);
+
   BiomeHandler bHandler = new BiomeHandler(pointsNumber);
   bHandler.calculateBiome(handler, uniformTemperatureMap, uniformPrecipitationMap, blurredVorMap);
   biomes = bHandler.getBiomes();
-  println(11);
+
   PerlinNoise hNoise = new PerlinNoise(1000.0, 2000.0, 0.01, 80, 8, 0.5);
   heightMap = hNoise.getSequence();
-  println(12);
+
   PerlinNoise smoothNoise = new PerlinNoise(1000.0, 2000.0, 0.01, 80, 1, 0.5);
   smoothHeightMap = smoothNoise.getSequence();
-  println(13);
-  newHMap = applyFilters();
 
+  newHMap = applyFilters();
 }
 
 void setup() {
@@ -89,36 +96,38 @@ void setup() {
   size(800, 800);
   theX = width / 2;
   theY = height / 2;
-  int mapSeed = 265948;
-  randomSeed(mapSeed);
-  points = new float[pointsNumber][2];
-  newPoints = new float[pointsNumber][2];
-  table = new int[width][height];
-  boundaryNoise = new float[width][height][2];
-  blurredVorMap = new int[width][height];
-  vHandler = new VoronoiHandler(mapSeed, pointsNumber);
-  points = vHandler.getPoints();
-  myVoronoi = vHandler.getVoronoi();
-  myDelaunay = vHandler.getDelaunay();
+  int mapSeed = 265948;  // ----
+  chunck1 = new Chunck(mapSeed, pointsNumber, chunckOffset);
+  chunckOffset++;
+  //randomSeed(mapSeed);  // ----
+  //points = new float[pointsNumber][2];
+  //newPoints = new float[pointsNumber][2];
+  //table = new int[width][height];
+  //boundaryNoise = new float[width][height][2];
+  //blurredVorMap = new int[width][height];
+  //vHandler = new VoronoiHandler(mapSeed, pointsNumber);  // ----
+  //points = vHandler.getPoints();
+  //myVoronoi = vHandler.getVoronoi();
+  //myDelaunay = vHandler.getDelaunay();
 
-  vHandler.drawVertcies();
-  vHandler.drawEdges();
-  vHandler.drawPoints();
+  //vHandler.drawVertcies();
+  //vHandler.drawEdges();
+  //vHandler.drawPoints();
 
-  thread("func");
+  //thread("func");
 
-  desertFilter = new BiomeFilter(0.2, 0.2, 0.2, 0.5);
-  savannaFilter = new BiomeFilter(0.1, 0.1, 0.1, 0.2);
-  tropicalWoodlandFilter = new BiomeFilter(0.33, 0.1, 0.1, 0.75);
-  tundraFilter = new BiomeFilter(0.1, 1, 1, 1);
-  seasonalForestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.2);
-  rainforestFilter = new BiomeFilter(0.25, 1, 1, 0.5);
-  temperateForestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.33);
-  temperateRainforestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.33);
-  borealFilter = new BiomeFilter(0.1, 0.05, 0.05, 0.1);
-  temporaryFilter = new BiomeFilter(0.50, 0.0, 1, 0.2);
-  temporary2Filter = new BiomeFilter(0.55, 0.4, 0.66, 0.2);
-  temporary3Filter = new BiomeFilter(0.2, 0.25, 0.8, 0.2);
+  //desertFilter = new BiomeFilter(0.2, 0.2, 0.2, 0.5);
+  //savannaFilter = new BiomeFilter(0.1, 0.1, 0.1, 0.2);
+  //tropicalWoodlandFilter = new BiomeFilter(0.33, 0.1, 0.1, 0.75);
+  //tundraFilter = new BiomeFilter(0.1, 1, 1, 1);
+  //seasonalForestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.2);
+  //rainforestFilter = new BiomeFilter(0.25, 1, 1, 0.5);
+  //temperateForestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.33);
+  //temperateRainforestFilter = new BiomeFilter(0.5, 0.4, 0.33, 0.33);
+  //borealFilter = new BiomeFilter(0.1, 0.05, 0.05, 0.1);
+  //temporaryFilter = new BiomeFilter(0.50, 0.0, 1, 0.2);
+  //temporary2Filter = new BiomeFilter(0.55, 0.4, 0.66, 0.2);
+  //temporary3Filter = new BiomeFilter(0.2, 0.25, 0.8, 0.2);
 
 }
 
@@ -164,6 +173,29 @@ void move(){
   }
 }
 
+void mouseClicked(){
+  Chunck newChunck = new Chunck(265948, pointsNumber, chunckOffset);
+  chunckOffset++;
+  newChunck.drawChunck();
+  if (chunckOffset == 2)
+    chunck2 = newChunck;
+  if (chunckOffset == 3)
+    chunck3 = newChunck;
+  if (chunckOffset == 4)
+    chunck4 = newChunck;
+  if (chunckOffset == 5)
+    chunck5 = newChunck;
+  if (chunckOffset == 6)
+    chunck6 = newChunck;
+  if (chunckOffset == 7)
+    chunck7 = newChunck;
+  if (chunckOffset == 8)
+    chunck8 = newChunck;
+  if (chunckOffset == 9)
+    chunck9 = newChunck;
+
+}
+
 void keyReleased(){
   if (keyCode == KeyEvent.VK_W){
     WPressed = false;
@@ -192,7 +224,130 @@ void keyPressed(){
     DPressed = true;
   }
   else if (keyCode == KeyEvent.VK_Z){
-    zoom();
+  background(255);
+  chunck1.drawTheVoronoi();
+  }
+  else if (keyCode == KeyEvent.VK_X){
+    chunck1.drawTheVoronoi();
+    if (chunckOffset >= 2)
+    chunck2.drawTheVoronoi();
+    if (chunckOffset >= 3)
+    chunck3.drawTheVoronoi();
+    if (chunckOffset >= 4)
+    chunck4.drawTheVoronoi();
+    if (chunckOffset >= 5)
+    chunck5.drawTheVoronoi();
+    if (chunckOffset >= 6)
+    chunck6.drawTheVoronoi();
+    if (chunckOffset >= 7)
+    chunck7.drawTheVoronoi();
+    if (chunckOffset >= 8)
+    chunck8.drawTheVoronoi();
+    if (chunckOffset >= 9)
+    chunck9.drawTheVoronoi();
+
+    println("chunck1");
+  }
+  else if (keyCode == KeyEvent.VK_C){
+    chunck1.drawChunck();
+    if (chunckOffset >= 2)
+    chunck2.drawChunck();
+    if (chunckOffset >= 3)
+    chunck3.drawChunck();
+    if (chunckOffset >= 4)
+    chunck4.drawChunck();
+    if (chunckOffset >= 5)
+    chunck5.drawChunck();
+    if (chunckOffset >= 6)
+    chunck6.drawChunck();
+    if (chunckOffset >= 7)
+    chunck7.drawChunck();
+    if (chunckOffset >= 8)
+    chunck8.drawChunck();
+    if (chunckOffset >= 9)
+    chunck9.drawChunck();
+
+    println("chunck1");
+  }
+  else if (keyCode == KeyEvent.VK_V){
+    chunck1.drawNoise();
+    if (chunckOffset >= 2)
+    chunck2.drawNoise();
+    if (chunckOffset >= 3)
+    chunck3.drawNoise();
+    if (chunckOffset >= 4)
+    chunck4.drawNoise();
+    if (chunckOffset >= 5)
+    chunck5.drawNoise();
+    if (chunckOffset >= 6)
+    chunck6.drawNoise();
+    if (chunckOffset >= 7)
+    chunck7.drawNoise();
+    if (chunckOffset >= 8)
+    chunck8.drawNoise();
+    if (chunckOffset >= 9)
+    chunck9.drawNoise();
+    println("chunck1");
+  }
+  else if (keyCode == KeyEvent.VK_B){
+    chunck1.drawSmoothNoise();
+    if (chunckOffset >= 2)
+    chunck2.drawSmoothNoise();
+    if (chunckOffset >= 3)
+    chunck3.drawSmoothNoise();
+    if (chunckOffset >= 4)
+    chunck4.drawSmoothNoise();
+    if (chunckOffset >= 5)
+    chunck5.drawSmoothNoise();
+    if (chunckOffset >= 6)
+    chunck6.drawSmoothNoise();
+    if (chunckOffset >= 7)
+    chunck7.drawSmoothNoise();
+    if (chunckOffset >= 8)
+    chunck8.drawSmoothNoise();
+    if (chunckOffset >= 9)
+    chunck9.drawSmoothNoise();
+    println("chunck1");
+  }
+  else if (keyCode == KeyEvent.VK_N){
+    chunck1.drawPrecipitationMap();
+    if (chunckOffset >= 2)
+    chunck2.drawPrecipitationMap();
+    if (chunckOffset >= 3)
+    chunck3.drawPrecipitationMap();
+    if (chunckOffset >= 4)
+    chunck4.drawPrecipitationMap();
+    if (chunckOffset >= 5)
+    chunck5.drawPrecipitationMap();
+    if (chunckOffset >= 6)
+    chunck6.drawPrecipitationMap();
+    if (chunckOffset >= 7)
+    chunck7.drawPrecipitationMap();
+    if (chunckOffset >= 8)
+    chunck8.drawPrecipitationMap();
+    if (chunckOffset >= 9)
+    chunck9.drawPrecipitationMap();
+    println("chunck1");
+  }
+  else if (keyCode == KeyEvent.VK_M){
+    chunck1.drawTemperatureMap();
+    if (chunckOffset >= 2)
+    chunck2.drawTemperatureMap();
+    if (chunckOffset >= 3)
+    chunck3.drawTemperatureMap();
+    if (chunckOffset >= 4)
+    chunck4.drawTemperatureMap();
+    if (chunckOffset >= 5)
+    chunck5.drawTemperatureMap();
+    if (chunckOffset >= 6)
+    chunck6.drawTemperatureMap();
+    if (chunckOffset >= 7)
+    chunck7.drawTemperatureMap();
+    if (chunckOffset >= 8)
+    chunck8.drawTemperatureMap();
+    if (chunckOffset >= 9)
+    chunck9.drawTemperatureMap();
+    println("chunck1");
   }
   else if (keyCode == KeyEvent.VK_Q){
     background(255);
