@@ -22,7 +22,6 @@ class Terrain {
     drawChunckEvent2 = new CounterEvent();
     drawChunckEvent3 = new CounterEvent();
     drawChunckEvent4 = new CounterEvent();
-    
   }
   
   void generateNewChunck(int chunckIndex){
@@ -86,7 +85,7 @@ class Terrain {
     }
   }
   
-  public void mainFunction(Player player){
+  public void draw(Player player){
     loadChunckCondition(player);
     loadNewChunck();
     drawChunck();

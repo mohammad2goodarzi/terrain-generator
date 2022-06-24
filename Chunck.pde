@@ -142,12 +142,8 @@ class Chunck{
           float c = finalHeightMap[i][j];        
           fill(c*256);
         }
-        //int g = biomes[region][1];
-        //int b = biomes[region][2];
         noStroke();
         circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
-        //color c = color(c*256, c*256, c*256);
-        //pixels[((i/chunckNumberSq)+xoffset)*width + (j/chunckNumberSq)+yoffset] = c;
       }
     }
   }  
@@ -176,8 +172,6 @@ class Chunck{
           float c = finalHeightMap[i][j];        
           fill(c*256);
         }
-        //int g = biomes[region][1];
-        //int b = biomes[region][2];
         noStroke();
         circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
       }
