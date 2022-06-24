@@ -9,32 +9,66 @@ float theX, theY;
 int pointsNumber = 100;
 
 int mapSeed;
-int chunckNumber = 49;
-Chunck[] chuncks;
+//int chunckNumber = 49;
 
+boolean flag = true, wannaShowFlag = false;
+Chunck[] chuncks;
+boolean[] wannaShow;
+//void func(){
+//  chuncks[23] = new Chunck(mapSeed, pointsNumber, 23);
+//  chuncks[17] = new Chunck(mapSeed, pointsNumber, 17);
+//  chuncks[31] = new Chunck(mapSeed, pointsNumber, 31);
+//  chuncks[25] = new Chunck(mapSeed, pointsNumber, 25);
+//  flag = true;
+//}
+
+
+
+
+Terrain terrain;
+Player player;
 void setup() {
   background(255);
   size(800, 800);
   theX = width / 2;
   theY = height / 2;
   mapSeed = 265948;  // ----
-  chuncks = new Chunck[chunckNumber];
-  chuncks[chunckNumber/2] = new Chunck(mapSeed, pointsNumber, chunckNumber/2);
-  //chunckOffset++;
-  chuncks[chunckNumber/2].drawChunck();
+  //chuncks = new Chunck[chunckNumber];
+  //wannaShow = new boolean[chunckNumber];
+  
+  terrain = new Terrain(mapSeed);
+  player = new Player();
+  
+  //chuncks[chunckNumber/2] = new Chunck(mapSeed, pointsNumber, chunckNumber/2);
+  ////chunckOffset++;
+  //chuncks[chunckNumber/2].drawChunck();
+  //thread("func");
   //for(int i = 0; i < chunckNumber; i++){
-  //  chuncks[i] = new Chunck(mapSeed, pointsNumber, i);
-  //  chuncks[i].drawChunck();
+  //  println(wannaShow[i]);
   //}
 }
 
 void draw(){
-  move();
-  showPlayer();
-  if (loadChunckCondition())
-  {
-    loadNewCunck();
-  }
+  terrain.mainFunction(player);
+
+  //move();
+  //showPlayer();
+  //if (loadChunckCondition() && flag)
+  //{
+  //  flag = false;
+  //  thread("loadNewCunck");
+
+  //  //loadNewCunck();
+  //}
+  //if (wannaShowFlag){
+  //  for(int i = 0; i < chunckNumber; i++){
+  //    if(wannaShow[i])
+  //    {
+  //      chuncks[i].drawChunck();
+  //      wannaShow[i] = false;
+  //    }
+  //  }
+  //}
   //zoom();
   //noFill();
   //strokeWeight(3);
@@ -44,20 +78,22 @@ void draw(){
   //circle(theX, theY, 10);
 }
 
-boolean loadChunckCondition(){
-  int temp1 = int(theX / (width / sqrt(chunckNumber)));
-  int temp2 = int(theY / (height / sqrt(chunckNumber)));
-  int chunckIndex = int(sqrt(chunckNumber))*temp1 + temp2;
-  return (chuncks[chunckIndex] == null);
-}
+//boolean loadChunckCondition(){
+//  int temp1 = int(theX / (width / sqrt(chunckNumber)));
+//  int temp2 = int(theY / (height / sqrt(chunckNumber)));
+//  int chunckIndex = int(sqrt(chunckNumber))*temp1 + temp2;
+//  return (chuncks[chunckIndex] == null);
+//}
 
-void loadNewCunck(){
-  int temp1 = int(theX / (width / sqrt(chunckNumber)));
-  int temp2 = int(theY / (height / sqrt(chunckNumber)));
-  int chunckIndex = int(sqrt(chunckNumber))*temp1 + temp2;
-  chuncks[chunckIndex] = new Chunck(mapSeed, pointsNumber, chunckIndex);
-  chuncks[chunckIndex].drawChunck();
-}
+//void loadNewCunck(){
+//  int temp1 = int(theX / (width / sqrt(chunckNumber)));
+//  int temp2 = int(theY / (height / sqrt(chunckNumber)));
+//  int chunckIndex = int(sqrt(chunckNumber))*temp1 + temp2;
+//  chuncks[chunckIndex] = new Chunck(mapSeed, pointsNumber, chunckIndex);
+//  wannaShow[chunckIndex] = true;
+//  wannaShowFlag = true;
+//  flag = true;
+//}
 
 //void zoom(){
 //  try{
@@ -97,31 +133,9 @@ void showPlayer(){
 }
 
 void keyReleased(){
-  if (keyCode == KeyEvent.VK_W){
-    WPressed = false;
-  }
-  else if (keyCode == KeyEvent.VK_S){
-    SPressed = false;
-  }
-  else if (keyCode == KeyEvent.VK_A){
-    APressed = false;
-  }
-  else if (keyCode == KeyEvent.VK_D){
-    DPressed = false;
-  }
+  player.keyReleased();
 }
 
 void keyPressed(){
-  if (keyCode == KeyEvent.VK_W){
-    WPressed = true;
-  }
-  else if (keyCode == KeyEvent.VK_S){
-    SPressed = true;
-  }
-  else if (keyCode == KeyEvent.VK_A){
-    APressed = true;
-  }
-  else if (keyCode == KeyEvent.VK_D){
-    DPressed = true;
-  }
+  player.keyPressed();
 }

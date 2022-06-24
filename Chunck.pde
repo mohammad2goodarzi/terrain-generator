@@ -3,6 +3,10 @@ class Chunck{
   int seed;
   int pointsNumber;
   int chunckOffset;
+  int chuncksPartNumber = 16;
+  int whichPart = 0;
+  float seaLevel = 0.45;
+  
   VoronoiHandler vHandler;
   BlurredVoronoiHandler bvHandler;
   PerlinNoise precipitationMap;
@@ -11,6 +15,7 @@ class Chunck{
   BiomeHandler biomeHandler;
   PerlinNoise heightNoise;
   PerlinNoise smoothNoise;
+  PerlinNoise oceanNoise;
   float[][] finalHeightMap;
   
   BiomeFilter desertFilter;
@@ -65,6 +70,7 @@ class Chunck{
     heightNoise = new PerlinNoise(1000.0 + (chunckOffset / 3)*width*0.015625, 2000.0 + int(chunckOffset % 3)*height*0.015625, 0.015625, 80, 8, 0.5);
 
     smoothNoise = new PerlinNoise(1000.0 + (chunckOffset / 3)*width*0.015625, 2000.0 + int(chunckOffset % 3)*height*0.015625, 0.015625, 80, 1, 0.5);
+    oceanNoise = new PerlinNoise(1000.0 + (chunckOffset / 3)*width*0.015625, 2000.0 + int(chunckOffset % 3)*height*0.015625, 0.015625, 80);
 
     applyFilters();
   }
@@ -120,79 +126,63 @@ class Chunck{
       }
     }
   }
-  public void drawChunck(){
+  
+  public void drawWholeChunck(){
     int[][] blurredVorMap = bvHandler.getBlurredVorMap();
     int[][] biomes = biomeHandler.getBiomes();
+    float[][] oceanMap = oceanNoise.getSequence();
     float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
     float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
     for(int i = 0; i < width; i++){
       for(int j = 0; j < height; j++){
         int region = blurredVorMap[i][j];
-        float c = finalHeightMap[i][j];
+        if(oceanMap[i][j] < seaLevel)
+          fill(0, 0, 255);
+        else{
+          float c = finalHeightMap[i][j];        
+          fill(c*256);
+        }
         //int g = biomes[region][1];
         //int b = biomes[region][2];
-        fill(c*256);
         noStroke();
         circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
+        //color c = color(c*256, c*256, c*256);
+        //pixels[((i/chunckNumberSq)+xoffset)*width + (j/chunckNumberSq)+yoffset] = c;
       }
     }
+  }  
+  
+  public void drawChunck(){
+    drawChunck(chuncksPartNumber, whichPart);
+    whichPart = (whichPart + 1) % chuncksPartNumber;
   }
-  public void drawNoise(){
-    float[][] heightMap = heightNoise.getSequence();
+  public void drawChunck(int partNumber, int whichPart){
+    int[][] blurredVorMap = bvHandler.getBlurredVorMap();
+    int[][] biomes = biomeHandler.getBiomes();
+    float[][] oceanMap = oceanNoise.getSequence();
     float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
     float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
-    for(int i = 0; i < width; i++){
-      for(int j = 0; j < height; j++){
-        fill(heightMap[i][j]*256);
+    
+    int eachSidePartNumber = int(sqrt(partNumber));
+    int eachPartLength = width / eachSidePartNumber;
+    
+    
+    for(int i = (whichPart%eachSidePartNumber)*eachPartLength; i < ((whichPart%eachSidePartNumber)+1)*eachPartLength; i++){
+      for(int j = (whichPart/eachSidePartNumber)*eachPartLength; j < ((whichPart/eachSidePartNumber)+1)*eachPartLength; j++){
+        int region = blurredVorMap[i][j];
+        if(oceanMap[i][j] < seaLevel)
+          fill(0, 0, 255);
+        else{
+          float c = finalHeightMap[i][j];        
+          fill(c*256);
+        }
+        //int g = biomes[region][1];
+        //int b = biomes[region][2];
         noStroke();
         circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
       }
     }
   }
-  public void drawSmoothNoise(){
-    println("drawSmoothNoise");
-    float[][] smoothHeightMap = smoothNoise.getSequence();
-    float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
-    float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
-    for(int i = 0; i < width; i++){
-      for(int j = 0; j < height; j++){
-        fill(smoothHeightMap[i][j]*256);
-        noStroke();
-        circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
-      }
-    }
-  }
-  public void drawPrecipitationMap(){
-    float[][] smoothHeightMap = precipitationMap.getUniformSequence();
-    float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
-    float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
-    for(int i = 0; i < width; i++){
-      for(int j = 0; j < height; j++){
-        fill(smoothHeightMap[i][j]*256);
-        noStroke();
-        circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
-      }
-    }
-  }
-  public void drawTemperatureMap(){
-    float[][] smoothHeightMap = temperatureMap.getUniformSequence();
-    float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
-    float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
-    for(int i = 0; i < width; i++){
-      for(int j = 0; j < height; j++){
-        fill(smoothHeightMap[i][j]*256);
-        noStroke();
-        circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
-      }
-    }
-  }
-  public void drawTheVoronoi(){
-    //background(255);
-    int xoff = chunckOffset / chunckNumberSq * (width / chunckNumberSq);
-    int yoff = chunckOffset % chunckNumberSq * (height / chunckNumberSq);
-    vHandler.drawVertcies(3, xoff, yoff);
-    vHandler.drawEdges(3, xoff, yoff);
-    //vHandler.drawPoints(3, xoff, yoff);
-  }
+  
   
 }
