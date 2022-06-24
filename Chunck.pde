@@ -128,23 +128,9 @@ class Chunck{
   }
   
   public void drawWholeChunck(){
-    int[][] blurredVorMap = bvHandler.getBlurredVorMap();
-    int[][] biomes = biomeHandler.getBiomes();
-    float[][] oceanMap = oceanNoise.getSequence();
-    float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
-    float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
-    for(int i = 0; i < width; i++){
-      for(int j = 0; j < height; j++){
-        int region = blurredVorMap[i][j];
-        if(oceanMap[i][j] < seaLevel)
-          fill(0, 0, 255);
-        else{
-          float c = finalHeightMap[i][j];        
-          fill(c*256);
-        }
-        noStroke();
-        circle((i/chunckNumberSq)+xoffset, (j/chunckNumberSq)+yoffset, 1);
-      }
+    for(int i = 0; i < chuncksPartNumber; i++){
+      drawChunck(chuncksPartNumber, whichPart);
+      whichPart = (whichPart + 1) % chuncksPartNumber;      
     }
   }  
   
@@ -168,6 +154,9 @@ class Chunck{
         int region = blurredVorMap[i][j];
         if(oceanMap[i][j] < seaLevel)
           fill(0, 0, 255);
+        else if(isRiver(i, j)){
+          fill(255, 0, 0);
+        }
         else{
           float c = finalHeightMap[i][j];        
           fill(c*256);
@@ -178,5 +167,32 @@ class Chunck{
     }
   }
   
-  
+  private boolean isRiver(int x, int y){
+    int riverSize = 3;
+    int[][] blurredVorMap = bvHandler.getBlurredVorMap();
+    int[][] biomes = biomeHandler.getBiomes();
+    int region = blurredVorMap[x][y];
+    if(x-riverSize>=0){
+      int regionLeft = blurredVorMap[x-riverSize][y];
+      if(biomes[region][0] != biomes[regionLeft][0])
+        return true;
+    }
+    if(x+riverSize<blurredVorMap.length){
+    int regionRight = blurredVorMap[x+riverSize][y];
+      if(biomes[region][0] != biomes[regionRight][0])
+        return true;
+    }
+    if(y+riverSize<blurredVorMap.length){
+    int regionUp = blurredVorMap[x][y+riverSize];
+      if(biomes[region][0] != biomes[regionUp][0])
+        return true;
+    }
+    if(y-riverSize>=0){
+    int regionDown = blurredVorMap[x][y-riverSize];
+      if(biomes[region][0] != biomes[regionDown][0])
+        return true;
+    }
+    return false;
+  }
+
 }
