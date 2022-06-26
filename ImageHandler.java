@@ -11,7 +11,7 @@ public class ImageHandler {
   
   public ImageHandler(){ // O(1)
     try {
-      this.picture = ImageIO.read(new File("C:\\Users\\WIN10\\Desktop\\pendulum\\processing_terrain_generator\\graph4.png"));
+      this.picture = ImageIO.read(new File("C:\\Users\\WIN10\\Desktop\\pendulum\\processing_terrain_generator\\graph.png"));
     } catch (IOException e) {
       e.printStackTrace();
     }

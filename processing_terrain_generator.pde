@@ -6,14 +6,12 @@ Player player;
 
 void setup() {
   background(255);
-  size(800, 800);
+  size(800, 800, P3D);
   theX = width / 2;
   theY = height / 2;
   mapSeed = 265948;
-
   terrain = new Terrain(mapSeed);
   player = new Player();
-  
 }
 
 void draw(){

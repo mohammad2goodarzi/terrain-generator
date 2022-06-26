@@ -1,5 +1,5 @@
 class Chunck{
-  int chunckNumberSq = 7;
+  int chunckNumberSq = 1;
   int seed;
   int pointsNumber;
   int chunckOffset;
@@ -36,6 +36,8 @@ class Chunck{
     this.pointsNumber = pointsNumber;
     this.chunckOffset = chunckOffset;
     vHandler = new VoronoiHandler(seed+chunckOffset, pointsNumber);
+    handler = new ImageHandler();
+
     desertFilter = new BiomeFilter(0.2, 0.2, 0.2, 0.5);
     savannaFilter = new BiomeFilter(0.1, 0.1, 0.1, 0.2);
     tropicalWoodlandFilter = new BiomeFilter(0.33, 0.1, 0.1, 0.75);
@@ -53,7 +55,7 @@ class Chunck{
   
   private void notThreadFunction(){
     bvHandler = new BlurredVoronoiHandler(vHandler.getPoints(), pointsNumber);
-    bvHandler.theVoronoiTable();
+    bvHandler.theVoronoiTable();  //thread
     bvHandler.blurVoronoiTable();
 
     precipitationMap = new PerlinNoise(0.0 + (chunckOffset / 3)*width*0.015625, 0.0 + int(chunckOffset % 3)*height*0.015625, 0.015625, 10);
@@ -62,8 +64,6 @@ class Chunck{
     temperatureMap = new PerlinNoise(0.0 + (chunckOffset / 3)*width*0.015625, 0.0 + int(chunckOffset % 3)*height*0.015625, 0.015625, 40);
     temperatureMap.makeThisUniform(0.33);
 
-    handler = new ImageHandler();
-  
     biomeHandler = new BiomeHandler(pointsNumber);
     biomeHandler.calculateBiome(handler, temperatureMap.getUniformSequence(), precipitationMap.getUniformSequence(), bvHandler.getBlurredVorMap());
 
@@ -139,9 +139,12 @@ class Chunck{
     whichPart = (whichPart + 1) % chuncksPartNumber;
   }
   public void drawChunck(int partNumber, int whichPart){
-    int[][] blurredVorMap = bvHandler.getBlurredVorMap();
-    int[][] biomes = biomeHandler.getBiomes();
-    float[][] oceanMap = oceanNoise.getSequence();
+    float[][] oceanMap;
+    try{
+      oceanMap = oceanNoise.getSequence();
+    } catch (NullPointerException e){
+      oceanMap = new float[width][height];    
+    }
     float xoffset = int(chunckOffset / chunckNumberSq) * (width / chunckNumberSq);
     float yoffset = (chunckOffset % chunckNumberSq) * (height / chunckNumberSq);
     
@@ -151,7 +154,6 @@ class Chunck{
     
     for(int i = (whichPart%eachSidePartNumber)*eachPartLength; i < ((whichPart%eachSidePartNumber)+1)*eachPartLength; i++){
       for(int j = (whichPart/eachSidePartNumber)*eachPartLength; j < ((whichPart/eachSidePartNumber)+1)*eachPartLength; j++){
-        int region = blurredVorMap[i][j];
         if(oceanMap[i][j] < seaLevel)
           fill(0, 0, 255);
         else if(isRiver(i, j)){
@@ -194,5 +196,60 @@ class Chunck{
     }
     return false;
   }
-
+  
+  public color[][] getTerrainColor(){
+    color[][] terrain = new color[width][height];
+    float[][] oceanMap;
+    try{
+      oceanMap = oceanNoise.getSequence();
+    } catch (NullPointerException e){
+      oceanMap = new float[width][height];    
+    }
+    int[][] blurredVorMap = bvHandler.getBlurredVorMap();
+    int[][] biomes = biomeHandler.getBiomes();
+    for(int i = 0; i < width; i++){
+      for(int j = 0; j < height; j++){
+        if(oceanMap[i][j] < seaLevel)
+          terrain[i][j] = color(0, 0, 255);
+        else if(isRiver(i, j)){
+          terrain[i][j] = color(10, 10, 220);
+        }
+        else{
+          int region = blurredVorMap[i][j];
+          int r = biomes[region][0];
+          int g = biomes[region][1];
+          int b = biomes[region][2];
+          terrain[i][j] = color(r,g,b);
+        }
+      }
+    }
+    return terrain;
+  }
+    
+  public float[][] getTerrain(){
+    float[][] terrain = new float[width][height];
+    float[][] oceanMap;
+    try{
+      oceanMap = oceanNoise.getSequence();
+    } catch (NullPointerException e){
+      oceanMap = new float[width][height];    
+    }
+    
+    for(int i = 0; i < width; i++){
+      for(int j = 0; j < height; j++){
+        if(oceanMap[i][j] < seaLevel)
+          terrain[i][j] = 0;
+        else if(isRiver(i, j)){
+          terrain[i][j] = 0;
+        }
+        else{
+          float c = finalHeightMap[i][j];        
+          terrain[i][j] = c;
+        }
+      }
+    }
+    return terrain;
+  }
+  
+  
 }
